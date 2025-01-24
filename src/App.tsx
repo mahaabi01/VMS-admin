@@ -5,8 +5,8 @@ import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
 import SignIn from './pages/Authentication/SignIn';
 import ECommerce from './pages/Dashboard/ECommerce';
-import FormElements from './pages/Form/FormElements';
-import FormLayout from './pages/Form/FormLayout';
+import FormElements from './pages/Product/AddProduct';
+import FormLayout from './pages/Product/FormLayout';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Tables from './pages/Tables';
@@ -41,17 +41,19 @@ function App() {
           index
           element={
             <>
-              <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <ECommerce />
+              <PageTitle title="VMS Admin Dashboard" />
+              <DefaultLayout>
+                <ECommerce />
+              </DefaultLayout>
             </>
           }
         />
 
         <Route
-          path="/forms/form-elements"
+          path="/product/addProduct"
           element={
             <>
-              <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Add Products" />
               <FormElements />
             </>
           }
