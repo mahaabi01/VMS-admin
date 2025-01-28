@@ -14,7 +14,7 @@
     "url": "https://tailadmin.com"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.5.0",
+    "@reduxjs/toolkit": "^2.5.1",
     "apexcharts": "^3.41.0",
     "axios": "^1.7.9",
     "flatpickr": "^4.6.13",

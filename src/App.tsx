@@ -37,7 +37,19 @@ function App() {
   ) : (
     <Provider store={store}>
       <Routes>
+
+      <Route
+          path="/login"
+          element={
+            <>
+              <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <SignIn />
+            </>
+          }
+        />
+
         <Route
+        path='/adminDashboard'
           index
           element={
             <>
@@ -58,6 +70,7 @@ function App() {
             </>
           }
         />
+
         <Route
           path="/product/addProduct"
           element={
@@ -132,24 +145,7 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/ui/buttons"
-          element={
-            <>
-              <PageTitle title="Buttons | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Buttons />
-            </>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <>
-              <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <SignIn />
-            </>
-          }
-        />
+        
       </Routes>
     </Provider>
   );
