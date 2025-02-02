@@ -1,10 +1,15 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { Product } from '../../types/data';
-import { addProduct } from '../../store/dataSlice';
+import { updateProduct, singleProduct } from '../../store/dataSlice';
 import { useAppDispatch } from '../../store/hooks';
 
-const AddProducts = () => {
+const UpdateProduct = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const categories = {
     Electronics: 'electronics',
     Clothing: 'clothing',
@@ -17,50 +22,47 @@ const AddProducts = () => {
     HomeAppliances: 'homeAppliances',
   };
 
-  const dispatch = useAppDispatch();
+  const [data, setData] = useState<Product | null>(null);
 
-  const [data, setData] = useState<Product>({
-    name: '',
-    description: '',
-    price: 0,
-    stock: 0,
-    imageUrl: '',
-    userId: '8b4ab554-e50c-447e-b14c-5f376a0ca4bf',
-    category: '',
-  });
+  useEffect(() => {
+    if (id) {
+      dispatch(singleProduct(id)).then((response: any) => {
+        setData(response.payload);
+      });
+    }
+  }, [dispatch, id]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: name === "imageUrl" ? e.target.files[0] : value,
-    });
+    setData((prevData) =>
+      prevData ? { ...prevData, [name]: value } : prevData
+    );
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Entered Data: ", data)
-    dispatch(addProduct(data));
+    if (data && id) {
+      dispatch(updateProduct( id,  data ));
+      navigate('/products');
+    }
   };
+
+  if (!data) return <div>Loading...</div>;
 
   return (
     <>
-      <Breadcrumb pageName="Add Products" />
+      <Breadcrumb pageName="Update Product" />
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-            Add Product
+            Update Product
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Product Name */}
               <div>
-                <label
-                  htmlFor="productName"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Product Name
                 </label>
                 <input
@@ -68,24 +70,21 @@ const AddProducts = () => {
                   name="name"
                   id="name"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="E.g., Apple iPhone 13"
+                  value={data.name}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              {/* Category */}
               <div>
-                <label
-                  htmlFor="categoryId"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
                   Category
                 </label>
                 <select
                   name="category"
                   id="category"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+                  value={data.category}
                   onChange={handleChange}
                   required
                 >
@@ -98,12 +97,8 @@ const AddProducts = () => {
                 </select>
               </div>
 
-              {/* Stock Quantity */}
               <div>
-                <label
-                  htmlFor="productTotalStockQty"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-2">
                   Stock Quantity
                 </label>
                 <input
@@ -111,18 +106,14 @@ const AddProducts = () => {
                   name="stock"
                   id="stock"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="E.g., 50"
+                  value={data.stock}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              {/* Price */}
               <div>
-                <label
-                  htmlFor="price"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
                   Price ($)
                 </label>
                 <input
@@ -130,36 +121,28 @@ const AddProducts = () => {
                   name="price"
                   id="price"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="E.g., 500"
+                  value={data.price}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              {/* Image Upload */}
               <div>
-                <label
-                  htmlFor="imageUrl"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Product Image
+                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                  Product Image URL
                 </label>
                 <input
-                  type="file"
+                  type="text"
                   name="imageUrl"
                   id="imageUrl"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+                  value={data.imageUrl}
                   onChange={handleChange}
-                  accept="image/*"
                 />
               </div>
 
-              {/* Product Details */}
               <div className="col-span-full">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                   Product Details
                 </label>
                 <textarea
@@ -167,7 +150,7 @@ const AddProducts = () => {
                   id="description"
                   rows={4}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="Enter detailed description"
+                  value={data.description}
                   onChange={handleChange}
                   required
                 ></textarea>
@@ -179,7 +162,7 @@ const AddProducts = () => {
                 type="submit"
                 className="px-6 py-2 bg-cyan-600 text-white rounded-md shadow-md hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200"
               >
-                Add Product
+                Update Product
               </button>
             </div>
           </form>
@@ -189,4 +172,4 @@ const AddProducts = () => {
   );
 };
 
-export default AddProducts;
+export default UpdateProduct;

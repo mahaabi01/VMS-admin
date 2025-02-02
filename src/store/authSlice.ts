@@ -1,5 +1,4 @@
 import {createSlice,PayloadAction} from '@reduxjs/toolkit' 
-
 import { AppDispatch } from './store'
 import { Status } from '../types/status'
 import { API } from '../http'
@@ -57,7 +56,7 @@ const authSlice = createSlice({
     }
 })
 
- export const {setUser,setStatus,resetStatus,setToken} = authSlice.actions 
+ export const {setUser,setStatus,resetStatus,setToken, setUserLogout} = authSlice.actions 
  export default authSlice.reducer
 
 

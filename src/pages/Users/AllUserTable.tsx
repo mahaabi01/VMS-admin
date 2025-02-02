@@ -1,37 +1,25 @@
+import { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-
-const userData = [
-  {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1234567890',
-    address: '123 Main Street, Cityville',
-    createdAt: '2025-01-01T10:00:00Z',
-  },
-  {
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    phone: '+9876543210',
-    address: '456 Elm Street, Townsville',
-    createdAt: '2025-01-03T09:00:00Z',
-  },
-  {
-    name: 'Robert Brown',
-    email: 'robert.brown@example.com',
-    phone: '+1122334455',
-    address: '789 Oak Avenue, Villageton',
-    createdAt: '2025-01-05T12:00:00Z',
-  },
-  {
-    name: 'Emily Davis',
-    email: 'emily.davis@example.com',
-    phone: '+6677889900',
-    address: '101 Pine Lane, Hamletburg',
-    createdAt: '2025-01-07T15:00:00Z',
-  },
-];
+import axios from 'axios';
+import { User } from '../../types/data';
+import { Link } from 'react-router-dom';
 
 const AllUserTable = () => {
+  const [userData, setUserData] = useState<User[]>([]); // Corrected type
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/getAllUsers');
+        setUserData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching users', error);
+      }
+    };
+
+    fetchUsers(); // Call function inside useEffect
+  }, []);
+
   return (
     <>
       <Breadcrumb pageName="User Table" />
@@ -97,12 +85,19 @@ const AllUserTable = () => {
                 </p>
               </div>
               <div className="col-span-1 flex items-center justify-center space-x-3">
-                <button
+                {/* <button
                   className="text-blue-500 hover:text-blue-700"
                   title="View"
                 >
                   <i className="fas fa-eye">View</i>
-                </button>
+                </button> */}
+                <Link
+                  to={`/user/${user.id}`}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+                >
+                  View Profile
+                </Link>
+
                 <button
                   className="text-yellow-500 hover:text-yellow-700"
                   title="Update"

@@ -1,21 +1,21 @@
+import React from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import CheckboxFive from '../../components/Checkboxes/CheckboxFive';
-import CheckboxFour from '../../components/Checkboxes/CheckboxFour';
-import CheckboxOne from '../../components/Checkboxes/CheckboxOne';
-import CheckboxThree from '../../components/Checkboxes/CheckboxThree';
-import CheckboxTwo from '../../components/Checkboxes/CheckboxTwo';
-import SwitcherFour from '../../components/Switchers/SwitcherFour';
-import SwitcherOne from '../../components/Switchers/SwitcherOne';
-import SwitcherThree from '../../components/Switchers/SwitcherThree';
-import SwitcherTwo from '../../components/Switchers/SwitcherTwo';
-import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
-import DatePickerTwo from '../../components/Forms/DatePicker/DatePickerTwo';
-import SelectGroupTwo from '../../components/Forms/SelectGroup/SelectGroupTwo';
-import MultiSelect from '../../components/Forms/MultiSelect';
 import SelectCategory from '../../components/Forms/SelectGroup/SelectCategory';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../store/hooks';
+import { Product } from '../../types/product';
+import { addProduct } from '../../store/dataSlice';
 
 const AddProduct = () => {
+  const navigate = useNavigate();
+
+  //form submission handler
+  const dispatch = useAppDispatch();
+  const handleAddProduct = async (data: Product) => {
+    console.log("Data from data: ", data)
+    dispatch(addProduct(data));
+  };
+
   return (
     <div>
       <Breadcrumb pageName="Add Products" />
@@ -27,7 +27,11 @@ const AddProduct = () => {
               Product Details
             </h3>
           </div>
-          <div className="flex flex-col gap-5.5 p-6.5">
+
+          <form
+            onSubmit={handleAddProduct}
+            className="flex flex-col gap-5.5 p-6.5"
+          >
             <div>
               <label className="mb-3 block text-black dark:text-white">
                 Product Name
@@ -85,12 +89,12 @@ const AddProduct = () => {
               />
             </div>
             <Link
-              to="#"
+              to="/"
               className="inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
             >
               Add Product
             </Link>
-          </div>
+          </form>
         </div>
       </div>
     </div>

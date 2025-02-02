@@ -6,24 +6,15 @@ export interface User {
   username: string
 }
 
-interface Category{
-  id: string,
-  categoryName: string
-}
-
 export interface Product{
-  id: string,
-  productName: string,
-  productDescription: string,
-  productPrice: number,
-  productTotalStockQty: number,
-  productImageUrl: string,
-  createdAt: string,
-  updatedAt: string,
+  id:string,
+  name: string,
+  description: string,
+  price: number,
+  stock: number,
+  imageUrl: string,
   userId: string,
-  categoryId: string,
-  User: User,
-  Category: Category
+  category: string
 }
 
 export enum PaymentMethod{
