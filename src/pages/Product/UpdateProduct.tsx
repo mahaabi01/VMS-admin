@@ -2,8 +2,8 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { Product } from '../../types/data';
-import { updateProduct, singleProduct } from '../../store/dataSlice';
 import { useAppDispatch } from '../../store/hooks';
+import axios from 'axios';
 
 const UpdateProduct = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,11 +25,21 @@ const UpdateProduct = () => {
   const [data, setData] = useState<Product | null>(null);
 
   useEffect(() => {
-    if (id) {
-      dispatch(singleProduct(id)).then((response: any) => {
-        setData(response.payload);
-      });
-    }
+    const fetchData = async () => {
+      if (id) {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/product/getSingleProduct/${id}`,
+          );
+          console.log('Response: ', response.data.data);
+          setData(response.data.data);
+        } catch (error) {
+          console.log('Error fetching product: ', error);
+        }
+      }
+    };
+
+    fetchData();
   }, [dispatch, id]);
 
   const handleChange = (
@@ -37,15 +47,28 @@ const UpdateProduct = () => {
   ) => {
     const { name, value } = e.target;
     setData((prevData) =>
-      prevData ? { ...prevData, [name]: value } : prevData
+      prevData ? { ...prevData, [name]: value } : prevData,
     );
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (data && id) {
-      dispatch(updateProduct( id,  data ));
-      navigate('/products');
+
+    if (id && data) {
+      try {
+        await axios.patch(
+          `http://localhost:3000/product/updateProduct/${id}`,
+          data,
+          {
+            headers: {
+              Authorization: `${localStorage.getItem('token')}`,
+            },
+          },
+        );
+        navigate('/SingleProduct/' + id);
+      } catch (error) {
+        console.log('Error updating the product:', error);
+      }
     }
   };
 
@@ -62,7 +85,10 @@ const UpdateProduct = () => {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Product Name
                 </label>
                 <input
@@ -70,21 +96,24 @@ const UpdateProduct = () => {
                   name="name"
                   id="name"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  value={data.name}
+                  value={data?.name || ''}
                   onChange={handleChange}
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Category
                 </label>
                 <select
                   name="category"
                   id="category"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  value={data.category}
+                  value={data?.category || ''}
                   onChange={handleChange}
                   required
                 >
@@ -98,7 +127,10 @@ const UpdateProduct = () => {
               </div>
 
               <div>
-                <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="stock"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Stock Quantity
                 </label>
                 <input
@@ -106,14 +138,17 @@ const UpdateProduct = () => {
                   name="stock"
                   id="stock"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  value={data.stock}
+                  value={data?.stock || ''}
                   onChange={handleChange}
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Price ($)
                 </label>
                 <input
@@ -121,14 +156,17 @@ const UpdateProduct = () => {
                   name="price"
                   id="price"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  value={data.price}
+                  value={data?.price || ''}
                   onChange={handleChange}
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="imageUrl"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Product Image URL
                 </label>
                 <input
@@ -136,13 +174,16 @@ const UpdateProduct = () => {
                   name="imageUrl"
                   id="imageUrl"
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  value={data.imageUrl}
+                  value={data?.imageUrl || ''}
                   onChange={handleChange}
                 />
               </div>
 
               <div className="col-span-full">
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Product Details
                 </label>
                 <textarea
@@ -150,7 +191,7 @@ const UpdateProduct = () => {
                   id="description"
                   rows={4}
                   className="w-full border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
-                  value={data.description}
+                  value={data?.description || ''}
                   onChange={handleChange}
                   required
                 ></textarea>

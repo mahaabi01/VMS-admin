@@ -153,7 +153,7 @@ export function singleProduct(id: string) {
   return async function singleProductThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.LOADING));
     try {
-      const response = await APIAuthenticated.get('/admin/product/' + id);
+      const response = await APIAuthenticated.get('product/getSingleProduct/' + id);
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
         dispatch(setSingleProduct(response.data.data));

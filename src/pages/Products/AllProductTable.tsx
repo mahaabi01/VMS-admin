@@ -68,7 +68,10 @@ const AllProductTable = () => {
               <div className="col-span-2 flex items-center">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="h-12.5 w-15 rounded-md">
-                    <img src={"http://localhost:3000/"+product.imageUrl} alt="Product" />
+                    <img
+                      src={'http://localhost:3000/' + product.imageUrl}
+                      alt="Product"
+                    />
                   </div>
                   <p className="text-sm text-black dark:text-white">
                     {product.name}
@@ -111,22 +114,34 @@ const AllProductTable = () => {
                   View Product
                 </Link>
 
-                {/* <button
-                  className="text-yellow-500 hover:text-yellow-700"
-                  title="Update"
-                >
-                  <i className="fas fa-edit">Update</i>
-                </button> */}
-
                 <Link
                   to={`/product/update/${product.id}`}
                   className="bg-orange-500-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-orange-600"
                 >
                   Update Product
                 </Link>
-                
+
                 <button
-                  className="text-red-500 hover:text-red-700"
+                  onClick={() => {
+                    axios
+                      .delete(
+                        `http://localhost:3000/product/deleteProduct/${product.id}`,
+                        {
+                          headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `${localStorage.getItem('token')}`,
+                          },
+                        },
+                      )
+                      .then((response) => {
+                        console.log(response.data);
+                        window.location.reload();
+                      })
+                      .catch((error) => {
+                        console.error('Error deleting product', error);
+                      });
+                  }}
+                  className="bg-red-500-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-orange-600"
                   title="Delete"
                 >
                   <i className="fas fa-trash">Delete</i>

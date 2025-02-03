@@ -35,6 +35,15 @@ function App() {
     <Provider store={store}>
       <Routes>
         <Route
+          path="/"
+          element={
+            <>
+              <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <SignIn />
+            </>
+          }
+        />
+        <Route
           path="/login"
           element={
             <>
@@ -104,6 +113,10 @@ function App() {
             </>
           }
         />
+
+        {/* <Route
+        path="/product/deleteProduct/:id"
+           */}
 
         <Route
           path="/user/allUsers"
